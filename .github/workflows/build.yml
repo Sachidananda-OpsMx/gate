@@ -5,6 +5,7 @@ on:
     branches:
     - master
     - release-*
+    - workflow-*
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx6g -Xms6g
@@ -13,7 +14,7 @@ env:
 jobs:
   branch-build:
     # Only run this on repositories in the 'spinnaker' org, not on forks.
-    if: startsWith(github.repository, 'spinnaker/')
+    if: startsWith(github.repository, 'Sachidananda-OpsMx/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -35,7 +36,7 @@ jobs:
         run: ./gradlew build --stacktrace ${{ steps.build_variables.outputs.REPO }}-web:installDist
       - name: Login to GAR
         # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
+        if: startsWith(github.repository, 'Sachidananda-OpsMx/')
         uses: docker/login-action@v1
         # use service account flow defined at: https://github.com/docker/login-action#service-account-based-authentication-1
         with:
@@ -44,7 +45,7 @@ jobs:
           password: ${{ secrets.GAR_JSON_KEY }}
       - name: Build and publish slim container image
         # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
+        if: startsWith(github.repository, 'Sachidananda-OpsMx/')
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -57,7 +58,7 @@ jobs:
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}-unvalidated-slim"
       - name: Build and publish ubuntu container image
         # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
+        if: startsWith(github.repository, 'Sachidananda-OpsMx/')
         uses: docker/build-push-action@v2
         with:
           context: .
